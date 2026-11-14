@@ -1,0 +1,6 @@
+/data/
+/tmp/
+/config.yaml
+*.exe
+*.test
+*.out

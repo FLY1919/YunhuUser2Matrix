@@ -1,0 +1,118 @@
+# yhmatrix 配置示例
+# 复制为 config.yaml，放到 yhmatrix 可执行文件旁边（服务端根目录）后修改。
+# 所有项都可以用 YHMATRIX_* 环境变量覆盖。
+# 下面的相对路径（./data、./element-web、./certs/*）都相对可执行文件目录解析。
+
+server:
+  # Matrix 域名，必须和客户端访问的域名一致，也决定用户 ID 后缀
+  # 例如 matrix.example.com -> @yh_10001:matrix.example.com
+  name: matrix.example.com
+
+  # 监听地址
+  bind: ":8008"
+
+  # 对外可访问的完整地址，用于 well-known 与媒体兜底链接。
+  # **默认注释掉**：留空时地址从每个请求的 Host 推导，局域网 IP、localhost、
+  # 反向代理都能自动正确。只有走反向代理、且客户端看到的域名和 server.name 不同时
+  # 才需要填（例如 https://matrix.example.com）。
+  # 填错的表现：客户端报"无法访问账号提供者"，服务端日志里却只有一串 200 的
+  # /.well-known/matrix/client —— 因为客户端被指到别的地址去了。
+  # public_url: "https://matrix.example.com"
+
+  # 单个媒体上传上限（字节）
+  max_upload_size: 104857600
+
+  # /sync 默认长轮询时长（毫秒）
+  sync_timeout_ms: 25000
+
+  # 是否允许 /register（云湖账号体系下建议保持 false）
+  allow_register: false
+
+  # 允许已存在的 Matrix ID 直接登录（不需要云湖凭证）。
+  # 账号、token、房间数据都已经在本地了，再走一遍手机号/邮箱流程只是为了开第二台设备。
+  # 打开时：输入 @yh_8516939:localhost（或 yh_8516939 / 8516939）随便填个密码就进。
+  # 关掉时：密码必须等于该账号保存的云湖 token。
+  # 注意：开着就等于"任何能访问本端口的人都能拿到已有账号的 access token"，
+  # 只适合局域网自用；要暴露到公网请改 false。
+  allow_relogin: true
+
+  # 给 Web 客户端加上 CORS 头
+  allow_cors: true
+
+  # /.well-known/matrix/support（Matrix v1.10 / MSC1929）：告诉客户端"服务器出问题找谁"。
+  # Element X 连不上服务器时的那个页面就会显示这里的管理员联系方式。
+  #
+  # 不配置时的默认行为：把本地第一个账号（按 user id 排序）当作 m.role.admin 发布。
+  # 单用户网桥里账号主人就是管理员，所以默认就够用，端点直接返回 200。
+  #
+  # 想自定义就打开下面这段；想让端点返回 404（= 不公开任何支持信息），
+  # 把 contacts 显式写成空列表 `contacts: []`。
+  # support:
+  #   support_page: "https://example.com/help"
+  #   contacts:
+  #     - role: m.role.admin          # m.role.admin（兜底）/ m.role.security（安全事件）
+  #       matrix_id: "@admin:example.com"
+  #       email_address: admin@example.com
+  #     - role: m.role.security
+  #       email_address: security@example.com
+
+  # 可选：托管一份 Element Web 静态包（解压后的 dist 目录）。
+  # 让客户端和 homeserver 同源，绕开浏览器对 http 局域网地址的拦截。
+  # web_dir: "./element-web"
+
+  # 可选：原生 HTTPS。两个都填才生效，适合配 mkcert 或正式证书。
+  # tls_cert: "./certs/fullchain.pem"
+  # tls_key:  "./certs/privkey.pem"
+
+yunhu:
+  base_url: "https://chat-go.jwzhd.com"
+  ws_url: "wss://chat-ws-go.jwzhd.com/ws"
+
+  # 云湖只接受这些值（大小写敏感）：
+  # windows / macos / android / linux / ios / fuchsia / Web
+  platform: windows
+
+  # 生成的云湖设备号前缀
+  device_prefix: yhmatrix
+
+  # 云湖只返回七牛 key（例如 sticker/xxx.gif），需要拼域名才能访问。
+  # 留空（推荐）时按云湖 API 文档自动分流：
+  #   表情/图片/头像 -> https://chat-img.jwznb.com/
+  #   语音          -> https://chat-audio1.jwznb.com/
+  #   视频          -> https://chat-video1.jwznb.com/
+  #   文件          -> https://chat-file.jwznb.com/
+  # 填了就强制所有裸 key 走这一个前缀（只有 mock 上游需要这么干）。
+  media_base: ""
+
+  # 从 Matrix 上传图片/文件时，需要先传到云湖的七牛空间。
+  # 留空（推荐）：上传域名按 bucket 自动查（api.qiniu.com/v4/query），
+  #   图片/表情 chat68、语音 chat68-audio、视频 chat68-video、文件 chat68-file。
+  # 填了就作为第一候选（只有 mock 上游需要这么干）。
+  # 注意：写死 https://upload.qiniup.com 对别的区域的 bucket 会直接 EOF。
+  upload_host: ""
+
+  # 请求编码：auto（先 protobuf，失败自动退化成 JSON）/ proto / json
+  wire: auto
+
+  timeout_ms: 30000
+
+  # 首次进入房间时回溯多少条历史消息，0 表示不回溯
+  backfill: 15
+
+  # WebSocket 重连与心跳
+  reconnect_min_ms: 1000
+  reconnect_max_ms: 60000
+  heartbeat_ms: 25000
+
+  # 开发用：进程内启动一个假的云湖 API（生产必须 false）
+  mock: false
+
+storage:
+  data_dir: "./data"
+  flush_interval_ms: 1500
+  # 每个房间在内存里保留的最大事件数，更早的历史通过云湖接口翻页
+  max_events_per_room: 1000
+
+log:
+  level: debug   # info / debug
+  format: text
