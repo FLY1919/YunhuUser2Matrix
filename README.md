@@ -1,4 +1,4 @@
-# yhmatrix
+# Yunhu User API to Matrix
 
 把云湖（Yunhu / chat-go.jwzhd.com）接成一个 **Matrix 服务端**。
 用任意 Matrix 客户端（Element、FluffyChat、Cinny、Nheko、SchildiChat…）登录你的云湖账号，
