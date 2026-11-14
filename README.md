@@ -112,7 +112,7 @@ FluffyChat 选"邮箱登录"时发的不是 `m.id.user`，而是第三方标识�
 ```json
 {"type":"m.login.password",
  "identifier":{"type":"m.id.thirdparty","medium":"email",
-               "address":"@241638640@qq.com:localhost"},
+               "address":"@241114514@qq.com:localhost"},
  "password":"…","initial_device_display_name":"FluffyChat android"}
 ```
 
@@ -126,7 +126,7 @@ FluffyChat 选"邮箱登录"时发的不是 `m.id.user`，而是第三方标识�
 | 请求里的位置 | 例子 |
 | --- | --- |
 | `identifier.user` | `@yh_8516939:localhost`（`m.id.user`，原样保留） |
-| `identifier.address` | `241638640@qq.com` / `@241638640@qq.com:localhost` |
+| `identifier.address` | `241114514@qq.com` / `@241114514@qq.com:localhost` |
 | `user` | 老客户端的字段 |
 | `email` / `phone` | 自定义登录类型用的字段 |
 
