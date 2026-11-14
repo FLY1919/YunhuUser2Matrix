@@ -135,10 +135,10 @@ FluffyChat 选"邮箱登录"时发的不是 `m.id.user`，而是第三方标识�
 `medium == msisdn` 时再去掉 `+`。所以下面四种写法都能登进同一个云湖账号：
 
 ```
-241638640@qq.com
-@241638640@qq.com:localhost
-@241638640@qq.com:192.168.1.12:8008
-241638640@qq.com（走 com.yunhu.email）
+241114514@qq.com
+@241114514@qq.com:localhost
+@241114514@qq.com:192.168.1.12:8008
+241114514@qq.com（走 com.yunhu.email）
 ```
 
 `m.id.user` 里的真正 Matrix ID **不解包** —— 它要原样交给 `localAccountFor`，
